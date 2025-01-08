@@ -91,7 +91,7 @@ class _AnimatedCardState extends State<AnimatedCard> with SingleTickerProviderSt
     return MouseRegion(
       onEnter: (_) => _onHoverStart(),
       onExit: (_) => _onHoverEnd(),
-      onHoverChange: (event) {
+      onHover: (event) {
         if (_isHovered) {
           _onMouseMove(event);
         }
