@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen.dart';
+import 'widgets/grid_background.dart';
 
 void main() {
   runApp(const PortfolioApp());
@@ -22,7 +23,9 @@ class PortfolioApp extends StatelessWidget {
         textTheme: GoogleFonts.poppinsTextTheme(),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const GridBackground(
+        child: HomeScreen(),
+      ),
     );
   }
 }
