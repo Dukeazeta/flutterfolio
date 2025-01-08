@@ -17,7 +17,8 @@ class AnimatedCard extends StatefulWidget {
   State<AnimatedCard> createState() => _AnimatedCardState();
 }
 
-class _AnimatedCardState extends State<AnimatedCard> with SingleTickerProviderStateMixin {
+class _AnimatedCardState extends State<AnimatedCard>
+    with SingleTickerProviderStateMixin {
   bool _isHovered = false;
   Offset _mousePosition = Offset.zero;
   late AnimationController _controller;
@@ -61,14 +62,14 @@ class _AnimatedCardState extends State<AnimatedCard> with SingleTickerProviderSt
 
   void _onMouseMove(PointerEvent event) {
     if (!widget.enableTilt) return;
-    
+
     final RenderBox box = context.findRenderObject() as RenderBox;
     final Offset localPosition = box.globalToLocal(event.position);
     final Offset normalizedPosition = Offset(
       (localPosition.dx / box.size.width) * 2 - 1,
       (localPosition.dy / box.size.height) * 2 - 1,
     );
-    
+
     setState(() {
       _mousePosition = normalizedPosition;
     });
@@ -107,7 +108,10 @@ class _AnimatedCardState extends State<AnimatedCard> with SingleTickerProviderSt
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(_isHovered ? 0.2 : 0),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withOpacity(_isHovered ? 0.2 : 0),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
