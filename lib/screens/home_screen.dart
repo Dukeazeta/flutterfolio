@@ -4,6 +4,7 @@ import '../widgets/hero_section.dart';
 import '../widgets/about_section.dart';
 import '../widgets/projects_section.dart';
 import '../widgets/contact_section.dart';
+import '../widgets/footer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
+  final List<GlobalKey> _sectionKeys = List.generate(5, (_) => GlobalKey());
+
+  void scrollToSection(int index) {
+    final context = _sectionKeys[index].currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -31,14 +44,18 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 100), // Space for fixed navbar
-                const HeroSection(),
-                const AboutSection(),
-                const ProjectsSection(),
-                const ContactSection(),
+                HeroSection(key: _sectionKeys[0]),
+                AboutSection(key: _sectionKeys[1]),
+                ProjectsSection(key: _sectionKeys[2]),
+                ContactSection(key: _sectionKeys[3]),
+                Footer(key: _sectionKeys[4]),
               ],
             ),
           ),
-          NavBar(scrollController: _scrollController), // Pass the controller
+          NavBar(
+            scrollController: _scrollController,
+            onSectionTap: scrollToSection,
+          ),
         ],
       ),
     );
