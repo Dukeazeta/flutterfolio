@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class GridBackground extends StatelessWidget {
   final Widget child;
-  
+
   const GridBackground({
     super.key,
     required this.child,
