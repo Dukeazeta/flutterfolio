@@ -16,11 +16,12 @@ class PortfolioApp extends StatelessWidget {
       title: 'Duke Azeta - Flutter Developer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2196F3),
-          brightness: Brightness.light,
+        colorScheme: ColorScheme.dark(
+          primary: const Color(0xFF00DEB5),
+          surface: const Color(0xFF1A1A1A),
+          background: const Color(0xFF0A0A0A),
         ),
-        textTheme: GoogleFonts.poppinsTextTheme(),
+        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
         useMaterial3: true,
       ),
       home: const GridBackground(
