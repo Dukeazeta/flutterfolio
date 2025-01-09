@@ -1,119 +1,209 @@
 import 'package:flutter/material.dart';
+import '../utils/responsive_utils.dart';
+import 'common/gradient_text.dart';
 
 class ProjectsSection extends StatelessWidget {
   const ProjectsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = ResponsiveUtils.isDesktop(context);
+    final isMobile = ResponsiveUtils.isMobile(context);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+      padding: ResponsiveUtils.getScreenPadding(context),
+      constraints: BoxConstraints(
+        maxWidth: ResponsiveUtils.getMaxContentWidth(context),
+      ),
       child: Column(
         children: [
-          Text(
+          const SizedBox(height: 100),
+          GradientText(
             'My Projects',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary,
+              ],
             ),
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
-          const SizedBox(height: 48),
-          Wrap(
-            spacing: 24,
-            runSpacing: 24,
-            children: [
-              _ProjectCard(
-                title: 'Project 1',
-                description: 'A Flutter mobile app for e-commerce',
-                technologies: ['Flutter', 'Firebase', 'Provider'],
-                imageUrl: 'assets/project1.png',
-              ),
-              _ProjectCard(
-                title: 'Project 2',
-                description: 'A cross-platform social media app',
-                technologies: ['Flutter', 'REST API', 'Bloc'],
-                imageUrl: 'assets/project2.png',
-              ),
-              _ProjectCard(
-                title: 'Project 3',
-                description: 'A Flutter web dashboard',
-                technologies: ['Flutter Web', 'Charts', 'GetX'],
-                imageUrl: 'assets/project3.png',
-              ),
-            ],
+          const SizedBox(height: 50),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: isMobile ? 1 : (isDesktop ? 3 : 2),
+              crossAxisSpacing: 30,
+              mainAxisSpacing: 30,
+              childAspectRatio: isMobile ? 1.2 : 0.8,
+            ),
+            itemCount: projects.length,
+            itemBuilder: (context, index) {
+              return ProjectCard(project: projects[index]);
+            },
           ),
+          const SizedBox(height: 100),
         ],
       ),
     );
   }
 }
 
-class _ProjectCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final List<String> technologies;
-  final String imageUrl;
+class ProjectCard extends StatefulWidget {
+  final Project project;
 
-  const _ProjectCard({
-    required this.title,
-    required this.description,
-    required this.technologies,
-    required this.imageUrl,
-  });
+  const ProjectCard({super.key, required this.project});
+
+  @override
+  State<ProjectCard> createState() => _ProjectCardState();
+}
+
+class _ProjectCardState extends State<ProjectCard> {
+  bool isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 350,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        transform: Matrix4.identity()
+          ..translate(0.0, isHovered ? -10.0 : 0.0, 0.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isHovered
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.primary.withOpacity(0.2),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(8),
+          boxShadow: isHovered
+              ? [
+                  BoxShadow(
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ]
+              : [],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Image.network(
+                widget.project.imageUrl,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-            child: const Center(
-              child: Text('Project Image'), // TODO: Replace with actual image
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.project.title,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    widget.project.description,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 20),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: widget.project.technologies
+                        .map((tech) => Chip(
+                              label: Text(tech),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.1),
+                              side: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            description,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: technologies.map((tech) => Chip(label: Text(tech))).toList(),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
+
+class Project {
+  final String title;
+  final String description;
+  final String imageUrl;
+  final List<String> technologies;
+
+  const Project({
+    required this.title,
+    required this.description,
+    required this.imageUrl,
+    required this.technologies,
+  });
+}
+
+final List<Project> projects = [
+  Project(
+    title: 'E-Commerce App',
+    description:
+        'A full-featured e-commerce application built with Flutter and Firebase, featuring real-time updates and seamless payment integration.',
+    imageUrl: 'https://picsum.photos/800/600?random=1',
+    technologies: ['Flutter', 'Firebase', 'Stripe'],
+  ),
+  Project(
+    title: 'Social Media Dashboard',
+    description:
+        'A responsive social media analytics dashboard with real-time data visualization and custom animations.',
+    imageUrl: 'https://picsum.photos/800/600?random=2',
+    technologies: ['Flutter', 'REST API', 'Charts'],
+  ),
+  Project(
+    title: 'Task Management',
+    description:
+        'A beautiful and intuitive task management app with cloud sync and team collaboration features.',
+    imageUrl: 'https://picsum.photos/800/600?random=3',
+    technologies: ['Flutter', 'SQLite', 'Provider'],
+  ),
+  Project(
+    title: 'Weather App',
+    description:
+        'A weather application with beautiful animations and accurate forecasts using modern weather APIs.',
+    imageUrl: 'https://picsum.photos/800/600?random=4',
+    technologies: ['Flutter', 'Weather API', 'Animations'],
+  ),
+  Project(
+    title: 'Fitness Tracker',
+    description:
+        'A comprehensive fitness tracking application with workout plans, progress tracking, and social features.',
+    imageUrl: 'https://picsum.photos/800/600?random=5',
+    technologies: ['Flutter', 'HealthKit', 'BLoC'],
+  ),
+  Project(
+    title: 'Music Player',
+    description:
+        'A modern music player with a beautiful UI, supporting various audio formats and playlist management.',
+    imageUrl: 'https://picsum.photos/800/600?random=6',
+    technologies: ['Flutter', 'Audio Player', 'Riverpod'],
+  ),
+];

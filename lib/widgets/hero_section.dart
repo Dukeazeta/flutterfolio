@@ -76,7 +76,14 @@ class HeroSection extends StatelessWidget {
                 const SizedBox(height: 40),
                 const GradientText(
                   'Flutter Developer',
-                  fontSize: 72,
+                  style: TextStyle(fontSize: 72),
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF4158D0),
+                      Color(0xFFC850C0),
+                      Color(0xFFFFCC70),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
                 TypingText(

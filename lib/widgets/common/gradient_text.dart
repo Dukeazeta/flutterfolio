@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class GradientText extends StatefulWidget {
   final String text;
-  final double fontSize;
-  final FontWeight fontWeight;
+  final TextStyle? style;
+  final Gradient gradient;
 
   const GradientText(
     this.text, {
     super.key,
-    this.fontSize = 32,
-    this.fontWeight = FontWeight.bold,
+    this.style,
+    required this.gradient,
   });
 
   @override
@@ -42,29 +42,12 @@ class _GradientTextState extends State<GradientText> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Colors.purple,
-              Theme.of(context).colorScheme.primary,
-            ],
-            stops: const [0.0, 0.5, 1.0],
-            transform: GradientRotation(_animation.value * 2 * 3.14159),
-          ).createShader(bounds),
-          child: Text(
-            widget.text,
-            style: TextStyle(
-              fontSize: widget.fontSize,
-              fontWeight: widget.fontWeight,
-              color: Colors.white,
-            ),
-          ),
-        );
-      },
+    return ShaderMask(
+      shaderCallback: (bounds) => widget.gradient.createShader(bounds),
+      child: Text(
+        widget.text,
+        style: widget.style?.copyWith(color: Colors.white) ?? const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }
