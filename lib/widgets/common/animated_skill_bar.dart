@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 
 class AnimatedSkillBar extends StatefulWidget {
-  final String skillName;
+  final String skill;
   final double percentage;
   final Color color;
+  final String description;
 
   const AnimatedSkillBar({
     super.key,
-    required this.skillName,
+    required this.skill,
     required this.percentage,
     required this.color,
+    required this.description,
   });
 
   @override
   State<AnimatedSkillBar> createState() => _AnimatedSkillBarState();
 }
 
-class _AnimatedSkillBarState extends State<AnimatedSkillBar>
-    with SingleTickerProviderStateMixin {
+class _AnimatedSkillBarState extends State<AnimatedSkillBar> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -29,14 +30,14 @@ class _AnimatedSkillBarState extends State<AnimatedSkillBar>
       vsync: this,
     );
 
-    _animation = Tween<double>(begin: 0, end: widget.percentage).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _animation = Tween<double>(
+      begin: 0,
+      end: widget.percentage,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
 
-    // Start the animation when the widget is first built
     _controller.forward();
   }
 
@@ -48,6 +49,8 @@ class _AnimatedSkillBarState extends State<AnimatedSkillBar>
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -55,8 +58,10 @@ class _AnimatedSkillBarState extends State<AnimatedSkillBar>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              widget.skillName,
-              style: Theme.of(context).textTheme.titleMedium,
+              widget.skill,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             AnimatedBuilder(
               animation: _animation,
@@ -65,6 +70,7 @@ class _AnimatedSkillBarState extends State<AnimatedSkillBar>
                   '${(_animation.value * 100).toInt()}%',
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: widget.color,
+                        fontWeight: FontWeight.bold,
                       ),
                 );
               },
@@ -72,38 +78,53 @@ class _AnimatedSkillBarState extends State<AnimatedSkillBar>
           ],
         ),
         const SizedBox(height: 8),
-        AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            return Stack(
-              children: [
-                Container(
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                FractionallySizedBox(
-                  widthFactor: _animation.value,
-                  child: Container(
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: widget.color,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: widget.color.withOpacity(0.5),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
+        Text(
+          widget.description,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.7),
+              ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: 12,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6),
+            color: Theme.of(context).colorScheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: widget.color.withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return Row(
+                children: [
+                  Expanded(
+                    flex: (_animation.value * 100).toInt(),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        gradient: LinearGradient(
+                          colors: [
+                            widget.color.withOpacity(0.7),
+                            widget.color,
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          },
+                  Expanded(
+                    flex: (100 - (_animation.value * 100)).toInt(),
+                    child: const SizedBox(),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ],
     );
