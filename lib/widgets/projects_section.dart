@@ -38,7 +38,7 @@ class ProjectsSection extends StatelessWidget {
               crossAxisCount: isMobile ? 1 : (isDesktop ? 3 : 2),
               crossAxisSpacing: 30,
               mainAxisSpacing: 30,
-              childAspectRatio: isMobile ? 1.2 : 0.8,
+              childAspectRatio: isMobile ? 1.2 : 1.1,
             ),
             itemCount: projects.length,
             itemBuilder: (context, index) {
@@ -47,103 +47,6 @@ class ProjectsSection extends StatelessWidget {
           ),
           const SizedBox(height: 100),
         ],
-      ),
-    );
-  }
-}
-
-class ProjectCard extends StatefulWidget {
-  final Project project;
-
-  const ProjectCard({super.key, required this.project});
-
-  @override
-  State<ProjectCard> createState() => _ProjectCardState();
-}
-
-class _ProjectCardState extends State<ProjectCard> {
-  bool isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => isHovered = true),
-      onExit: (_) => setState(() => isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        transform: Matrix4.identity()
-          ..translate(0.0, isHovered ? -10.0 : 0.0, 0.0),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isHovered
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.primary.withOpacity(0.2),
-          ),
-          boxShadow: isHovered
-              ? [
-                  BoxShadow(
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ]
-              : [],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              child: Image.network(
-                widget.project.imageUrl,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.project.title,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    widget.project.description,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: widget.project.technologies
-                        .map((tech) => Chip(
-                              label: Text(tech),
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.1),
-                              side: BorderSide(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -166,44 +69,149 @@ class Project {
 final List<Project> projects = [
   Project(
     title: 'E-Commerce App',
-    description:
-        'A full-featured e-commerce application built with Flutter and Firebase, featuring real-time updates and seamless payment integration.',
-    imageUrl: 'https://picsum.photos/800/600?random=1',
+    description: 'A full-featured e-commerce application built with Flutter and Firebase.',
+    imageUrl: 'https://picsum.photos/500/300',
     technologies: ['Flutter', 'Firebase', 'Stripe'],
   ),
   Project(
     title: 'Social Media Dashboard',
-    description:
-        'A responsive social media analytics dashboard with real-time data visualization and custom animations.',
-    imageUrl: 'https://picsum.photos/800/600?random=2',
+    description: 'A responsive social media analytics dashboard with real-time data visualization.',
+    imageUrl: 'https://picsum.photos/500/301',
     technologies: ['Flutter', 'REST API', 'Charts'],
   ),
   Project(
     title: 'Task Management',
-    description:
-        'A beautiful and intuitive task management app with cloud sync and team collaboration features.',
-    imageUrl: 'https://picsum.photos/800/600?random=3',
+    description: 'A beautiful and intuitive task management app with cloud sync.',
+    imageUrl: 'https://picsum.photos/500/302',
     technologies: ['Flutter', 'SQLite', 'Provider'],
   ),
   Project(
     title: 'Weather App',
-    description:
-        'A weather application with beautiful animations and accurate forecasts using modern weather APIs.',
-    imageUrl: 'https://picsum.photos/800/600?random=4',
+    description: 'A weather application with beautiful animations and accurate forecasts.',
+    imageUrl: 'https://picsum.photos/500/303',
     technologies: ['Flutter', 'Weather API', 'Animations'],
   ),
   Project(
     title: 'Fitness Tracker',
-    description:
-        'A comprehensive fitness tracking application with workout plans, progress tracking, and social features.',
-    imageUrl: 'https://picsum.photos/800/600?random=5',
+    description: 'A comprehensive fitness tracking application with workout plans.',
+    imageUrl: 'https://picsum.photos/500/304',
     technologies: ['Flutter', 'HealthKit', 'BLoC'],
   ),
   Project(
     title: 'Music Player',
-    description:
-        'A modern music player with a beautiful UI, supporting various audio formats and playlist management.',
-    imageUrl: 'https://picsum.photos/800/600?random=6',
+    description: 'A modern music player with a beautiful UI, supporting various audio formats.',
+    imageUrl: 'https://picsum.photos/500/305',
     technologies: ['Flutter', 'Audio Player', 'Riverpod'],
   ),
 ];
+
+class ProjectCard extends StatefulWidget {
+  final Project project;
+
+  const ProjectCard({super.key, required this.project});
+
+  @override
+  State<ProjectCard> createState() => _ProjectCardState();
+}
+
+class _ProjectCardState extends State<ProjectCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        transform: Matrix4.identity()..translate(0.0, isHovered ? -10.0 : 0.0, 0.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isHovered
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.primary.withOpacity(0.2),
+          ),
+          boxShadow: isHovered
+              ? [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ]
+              : [],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: Image.network(
+                  widget.project.imageUrl,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.project.title,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.project.description,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                      height: 32,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: widget.project.technologies.map((tech) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Text(
+                                tech,
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

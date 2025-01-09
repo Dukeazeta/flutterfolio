@@ -29,7 +29,8 @@ class AboutSection extends StatelessWidget {
               ],
             ),
             style: TextStyle(
-              fontSize: Theme.of(context).textTheme.displayMedium?.fontSize ?? 32.0,
+              fontSize:
+                  Theme.of(context).textTheme.displayMedium?.fontSize ?? 32.0,
               fontWeight: FontWeight.bold,
             ),
           ),
