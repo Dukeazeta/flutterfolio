@@ -284,6 +284,13 @@ class _FooterSocialLinkState extends State<_FooterSocialLink> {
                     : Colors.white.withOpacity(0.7),
                 BlendMode.srcIn,
               ),
+              placeholderBuilder: (context) => Icon(
+                Icons.link,
+                size: 20,
+                color: _isHovered
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.white.withOpacity(0.7),
+              ),
             ),
             const SizedBox(width: 8),
             Text(
