@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/responsive_utils.dart';
 import 'common/gradient_text.dart';
-import 'dart:math' as math';
+import 'dart:math' as math;
 import 'package:url_launcher/url_launcher.dart';
 
 class ProjectsSection extends StatelessWidget {
