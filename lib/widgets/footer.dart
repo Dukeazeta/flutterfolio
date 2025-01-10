@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/responsive_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Footer extends StatelessWidget {
@@ -56,12 +57,45 @@ class Footer extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
           ),
           const SizedBox(height: 30),
-          Text(
-            ' ${DateTime.now().year} Duke Azeta. All rights reserved.',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 14,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                ' ${DateTime.now().year} Duke Azeta. All rights reserved.',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '•',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Row(
+                children: [
+                  Text(
+                    'Made with ',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                  FlutterLogo(size: 16),
+                  Text(
+                    ' Flutter',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -129,10 +163,9 @@ class Footer extends StatelessWidget {
 
   Widget _buildSocialLinks(BuildContext context) {
     final socialLinks = [
-      ('GitHub', FontAwesomeIcons.github, 'https://github.com/dukeazeta'),
-      ('LinkedIn', FontAwesomeIcons.linkedin, 'https://linkedin.com/in/dukeazeta'),
-      ('Twitter', FontAwesomeIcons.twitter, 'https://twitter.com/dukeazeta'),
-      ('Medium', FontAwesomeIcons.medium, 'https://medium.com/@dukeazeta'),
+      ('GitHub', 'assets/icons/github (1).svg', 'https://github.com/dukeazeta'),
+      ('LinkedIn', 'assets/icons/linkedin-2.svg', 'https://linkedin.com/in/dukeazeta'),
+      ('Twitter', 'assets/icons/twitter-x (3).svg', 'https://twitter.com/dukeazeta'),
     ];
 
     return Column(
@@ -149,8 +182,8 @@ class Footer extends StatelessWidget {
         const SizedBox(height: 20),
         ...socialLinks.map((link) => Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: _FooterLink(
-            icon: link.$2,
+          child: _FooterSocialLink(
+            svgPath: link.$2,
             text: link.$1,
             onTap: () => launchUrl(Uri.parse(link.$3)),
           ),
@@ -198,6 +231,61 @@ class _FooterLinkState extends State<_FooterLink> {
               ),
               const SizedBox(width: 8),
             ],
+            Text(
+              widget.text,
+              style: TextStyle(
+                color: _isHovered
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.white.withOpacity(0.7),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FooterSocialLink extends StatefulWidget {
+  final String svgPath;
+  final String text;
+  final VoidCallback onTap;
+
+  const _FooterSocialLink({
+    required this.svgPath,
+    required this.text,
+    required this.onTap,
+  });
+
+  @override
+  State<_FooterSocialLink> createState() => _FooterSocialLinkState();
+}
+
+class _FooterSocialLinkState extends State<_FooterSocialLink> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              widget.svgPath,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(
+                _isHovered
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.white.withOpacity(0.7),
+                BlendMode.srcIn,
+              ),
+            ),
+            const SizedBox(width: 8),
             Text(
               widget.text,
               style: TextStyle(
