@@ -48,7 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 AboutSection(key: _sectionKeys[1]),
                 ProjectsSection(key: _sectionKeys[2]),
                 ContactSection(key: _sectionKeys[3]),
-                Footer(key: _sectionKeys[4]),
+                Footer(
+                  key: _sectionKeys[4],
+                  onSectionTap: scrollToSection,
+                ),
               ],
             ),
           ),

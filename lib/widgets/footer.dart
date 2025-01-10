@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import '../utils/responsive_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({super.key});
+  final Function(int)? onSectionTap;
+  
+  const Footer({
+    super.key,
+    this.onSectionTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,33 +23,32 @@ class Footer extends StatelessWidget {
       ),
       child: Column(
         children: [
-          if (!isMobile)
-            Container(
-              constraints: BoxConstraints(
-                maxWidth: ResponsiveUtils.getMaxContentWidth(context),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: _buildContactInfo(context)),
-                  const SizedBox(width: 20),
-                  Expanded(child: _buildQuickLinks(context)),
-                  const SizedBox(width: 20),
-                  Expanded(child: _buildSocialLinks(context)),
-                ],
-              ),
-            )
-          else
-            Column(
-              children: [
-                _buildContactInfo(context),
-                const SizedBox(height: 40),
-                _buildQuickLinks(context),
-                const SizedBox(height: 40),
-                _buildSocialLinks(context),
-              ],
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: ResponsiveUtils.getMaxContentWidth(context),
             ),
+            child: isMobile
+                ? Column(
+                    children: [
+                      _buildContactInfo(context),
+                      const SizedBox(height: 40),
+                      _buildQuickLinks(context),
+                      const SizedBox(height: 40),
+                      _buildSocialLinks(context),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: _buildContactInfo(context)),
+                      const SizedBox(width: 40),
+                      Expanded(child: _buildQuickLinks(context)),
+                      const SizedBox(width: 40),
+                      Expanded(child: _buildSocialLinks(context)),
+                    ],
+                  ),
+          ),
           const SizedBox(height: 60),
           Container(
             width: double.infinity,
@@ -53,7 +58,10 @@ class Footer extends StatelessWidget {
           const SizedBox(height: 30),
           Text(
             ' ${DateTime.now().year} Duke Azeta. All rights reserved.',
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 14,
+            ),
           ),
         ],
       ),
@@ -66,166 +74,141 @@ class Footer extends StatelessWidget {
       children: [
         Text(
           'Contact',
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 20),
-        _buildContactItem(
-          context,
-          icon: Icons.email,
-          text: 'hello@dukeazeta.dev',
-          onTap: () => _launchUrl('mailto:hello@dukeazeta.dev'),
+        _FooterLink(
+          icon: Icons.email_outlined,
+          text: 'dukeazeta@gmail.com',
+          onTap: () => launchUrl(Uri.parse('mailto:dukeazeta@gmail.com')),
         ),
-        const SizedBox(height: 10),
-        _buildContactItem(
-          context,
-          icon: Icons.phone,
+        const SizedBox(height: 12),
+        _FooterLink(
+          icon: Icons.phone_outlined,
           text: '+234 123 456 7890',
-          onTap: () => _launchUrl('tel:+2341234567890'),
-        ),
-        const SizedBox(height: 10),
-        _buildContactItem(
-          context,
-          icon: Icons.location_on,
-          text: 'Lagos, Nigeria',
-          onTap: () {},
+          onTap: () => launchUrl(Uri.parse('tel:+2341234567890')),
         ),
       ],
     );
   }
 
   Widget _buildQuickLinks(BuildContext context) {
+    final quickLinks = [
+      ('Home', 0),
+      ('About', 1),
+      ('Projects', 2),
+      ('Contact', 3),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Quick Links',
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 20),
-        _buildFooterLink(context, 'Home', () {}),
-        const SizedBox(height: 10),
-        _buildFooterLink(context, 'About', () {}),
-        const SizedBox(height: 10),
-        _buildFooterLink(context, 'Projects', () {}),
-        const SizedBox(height: 10),
-        _buildFooterLink(context, 'Contact', () {}),
+        ...quickLinks.map((link) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _FooterLink(
+            text: link.$1,
+            onTap: () => onSectionTap?.call(link.$2),
+          ),
+        )),
       ],
     );
   }
 
   Widget _buildSocialLinks(BuildContext context) {
+    final socialLinks = [
+      ('GitHub', FontAwesomeIcons.github, 'https://github.com/dukeazeta'),
+      ('LinkedIn', FontAwesomeIcons.linkedin, 'https://linkedin.com/in/dukeazeta'),
+      ('Twitter', FontAwesomeIcons.twitter, 'https://twitter.com/dukeazeta'),
+      ('Medium', FontAwesomeIcons.medium, 'https://medium.com/@dukeazeta'),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Social Links',
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 20),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildSocialIcon(
-              context,
-              'assets/icons/github.png',
-              () => _launchUrl('https://github.com/dukeazeta'),
-            ),
-            const SizedBox(width: 20),
-            _buildSocialIcon(
-              context,
-              'assets/icons/linkedin.png',
-              () => _launchUrl('https://linkedin.com/in/dukeazeta'),
-            ),
-            const SizedBox(width: 20),
-            _buildSocialIcon(
-              context,
-              'assets/icons/twitter.png',
-              () => _launchUrl('https://twitter.com/dukeazeta'),
-            ),
-          ],
-        ),
+        ...socialLinks.map((link) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _FooterLink(
+            icon: link.$2,
+            text: link.$1,
+            onTap: () => launchUrl(Uri.parse(link.$3)),
+          ),
+        )),
       ],
     );
   }
+}
 
-  Widget _buildContactItem(
-    BuildContext context, {
-    required IconData icon,
-    required String text,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 20,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          const SizedBox(width: 10),
-          Text(
-            text,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ],
-      ),
-    );
-  }
+class _FooterLink extends StatefulWidget {
+  final IconData? icon;
+  final String text;
+  final VoidCallback onTap;
 
-  Widget _buildFooterLink(
-    BuildContext context,
-    String text,
-    VoidCallback onTap,
-  ) {
-    return InkWell(
-      onTap: onTap,
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
-    );
-  }
+  const _FooterLink({
+    this.icon,
+    required this.text,
+    required this.onTap,
+  });
 
-  Widget _buildSocialIcon(
-    BuildContext context,
-    String iconPath,
-    VoidCallback onTap,
-  ) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-          ),
-        ),
-        child: Image.asset(
-          iconPath,
-          width: 24,
-          height: 24,
-          color: Theme.of(context).colorScheme.primary,
+  @override
+  State<_FooterLink> createState() => _FooterLinkState();
+}
+
+class _FooterLinkState extends State<_FooterLink> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (widget.icon != null) ...[
+              Icon(
+                widget.icon,
+                size: 16,
+                color: _isHovered
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.white.withOpacity(0.7),
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              widget.text,
+              style: TextStyle(
+                color: _isHovered
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.white.withOpacity(0.7),
+              ),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  Future<void> _launchUrl(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    }
   }
 }
