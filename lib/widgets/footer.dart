@@ -180,14 +180,17 @@ class Footer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        ...socialLinks.map((link) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: _FooterSocialLink(
-            svgPath: link.$2,
-            text: link.$1,
-            onTap: () => launchUrl(Uri.parse(link.$3)),
-          ),
-        )),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: socialLinks.map((link) => Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: _FooterSocialLink(
+              svgPath: link.$2,
+              tooltip: link.$1,
+              onTap: () => launchUrl(Uri.parse(link.$3)),
+            ),
+          )).toList(),
+        ),
       ],
     );
   }
@@ -248,12 +251,12 @@ class _FooterLinkState extends State<_FooterLink> {
 
 class _FooterSocialLink extends StatefulWidget {
   final String svgPath;
-  final String text;
+  final String tooltip;
   final VoidCallback onTap;
 
   const _FooterSocialLink({
     required this.svgPath,
-    required this.text,
+    required this.tooltip,
     required this.onTap,
   });
 
@@ -269,39 +272,36 @@ class _FooterSocialLinkState extends State<_FooterSocialLink> {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset(
+      child: Tooltip(
+        message: widget.tooltip,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: _isHovered 
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: _isHovered
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                width: 2,
+              ),
+            ),
+            child: SvgPicture.asset(
               widget.svgPath,
-              width: 20,
-              height: 20,
+              width: 24,
+              height: 24,
               colorFilter: ColorFilter.mode(
                 _isHovered
                     ? Theme.of(context).colorScheme.primary
                     : Colors.white.withOpacity(0.7),
                 BlendMode.srcIn,
               ),
-              placeholderBuilder: (context) => Icon(
-                Icons.link,
-                size: 20,
-                color: _isHovered
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.white.withOpacity(0.7),
-              ),
             ),
-            const SizedBox(width: 8),
-            Text(
-              widget.text,
-              style: TextStyle(
-                color: _isHovered
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.white.withOpacity(0.7),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
